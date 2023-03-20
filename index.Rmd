@@ -1,0 +1,84 @@
+---
+title: "Data Science"
+author: "Benson Kenduiywo"
+bibliography: references.bib
+csl: "apa-6th-edition.csl"
+output: 
+   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Climate Security
+
+*Climate security* refers to any **threats or risks to states, societies, and individual citizens directly or indirectly caused by climate change**. Climate variability and climate extreme events are impacting food, land and water systems thereby threatening agriculture productivity, and diminishing natural resources of land and water, which increases resource-based conflicts. 
+
+
+### Ethiopia
+
+Located in the horn of Africa.
+
+```{r E1, message=F, warning=F, echo=F}
+library(terra)
+root <- 'D:/OneDrive - CGIAR/Analysis/CSO/'
+iso <- 'ETH'
+conf <- geojsonio::geojson_sf(paste0(root,iso,'/clim_conflict_ips_overlays.geojson'))
+#conf <- subset(conf, intersect_conf_clim != "Limited conflict-[NA]" & intersect_conf_clim != "High conflict-[NA]")
+temp <- conf[conf$conflict_clust_label=="High conflict"  ,]
+temp <- temp[temp$intersect_conf_clim !="High conflict-[NA]",] 
+i <- temp$intersect_conf_clim
+
+temp$intersect_conf_clim[i=="High conflict-[High levels of precipitation/Low levels of Heat stress]"] <-
+  "High conflict + Low heat stress"
+temp$intersect_conf_clim[i=="High conflict-[Moderate levels of precipitation/moderate levels of Heat stress]"] <-
+  "High conflict + Moderate heat stress"
+temp$intersect_conf_clim[i== "High conflict-[Low levels of precipitation/High levels of Heat stress]"] <-
+  "High conflict + High heat stress" 
+
+i <- temp$intersect_conf_clim
+temp$clust[i=="High conflict + Low heat stress"] <- 3
+temp$clust[i=="High conflict + Moderate heat stress"] <- 2
+temp$clust[i=="High conflict + High heat stress"] <- 1
+temp$clust <- as.factor(temp$clust)
+labs <- c("High conflict + High heat stress","High conflict + Moderate heat stress",
+          "High conflict + Low heat stress") 
+
+bdy1 <- geodata::gadm(country=iso, level=1, path=paste0(root,iso,'/'))
+bdy1 <- sf::st_as_sf(bdy1)
+bdy2 <- geodata::gadm(country=iso, level=2, path=paste0(root,iso,'/'))
+bdy2 <- sf::st_as_sf(bdy2)
+bdy3 <- geodata::gadm(country=iso, level=3, path=paste0(root,iso,'/'))
+bdy3 <- sf::st_as_sf(bdy3)
+library(tmap)
+library(mapview)
+tmap_mode("view")
+et <- tm_shape(bdy1, name = 'Region')+
+  tm_borders() +
+  tm_shape(bdy2, name = 'Zone')+
+  tm_borders() +
+  tm_shape(bdy3, name = 'Woreda')+
+  tm_borders() +
+  tm_shape(bdy3, name = 'Woreda')+
+  tm_borders()+
+  tm_shape(temp, name = 'Conflict')+
+  tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs)+
+  tm_dots(size='FATALITIES', col='blue')+
+  tm_format("World")
+et 
+
+
+```
+
+
+
+## References
+
