@@ -1,0 +1,71 @@
+---
+title: "Climate Security Investment Planning (CSIP) Workshop"
+date: "2023-03-20"
+bibliography: references.bib
+csl: "apa-6th-edition.csl"
+output: 
+   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Background
+
+The CSIP intends to engage Climate Smart Agriculture (CSA) practitioners and decision makers in developing programmatic and investment strategies that integrate conflict-sensitive approaches in CSA interventions. To achieve this targeted areas have been identified based on evidence from an intersection of climate and conflict. Three scenarios, focusing on only high conflict wiith different climate hotspot categories, were analyzed as follows:
+
+1. **Scenario I**
+
+In this scenario all available ACCLED conflict data between 1997--2022 were used. 
+
+```{r k1, echo=FALSE, message=F, warning=F,comment=F}
+library(terra)
+root <- 'D:/OneDrive - CGIAR/Analysis/CSO/'
+iso <- 'KEN'
+conf <- geojsonio::geojson_sf(paste0(root,iso,'/clim_conflict_ips_overlays  (ACCLED-1997-2022).geojson'))
+conf <- conf[conf$conflict_clust_label=="High conflict"  ,]
+k <- unique(conf$intersect_conf_clim)
+k <- rev(k)
+#k <- c(k[1:4],k[9:12],k[5:8])
+for(i in 1:length(k)){
+  conf$clust[conf$intersect_conf_clim==k[i]] <- i
+}
+#labs <- conf$intersect_conf_clim[!duplicated(conf$clust)]
+labs <- gsub(" levels of|\\[|/.*", "", k)
+
+#c(1,3,4,2,9,11,)
+
+conf$clust <- as.factor(conf$clust)
+bdy1 <- geodata::gadm(country=iso, level=1, path=paste0(root,iso,'/'))
+bdy1 <- sf::st_as_sf(bdy1)
+bdy2 <- geodata::gadm(country=iso, level=2, path=paste0(root,iso,'/'))
+bdy2 <- sf::st_as_sf(bdy2)
+bdy3 <- geodata::gadm(country=iso, level=3, path=paste0(root,iso,'/'))
+bdy3 <- sf::st_as_sf(bdy3)
+conf$Ward <- conf$NAME_3
+library(tmap)
+library(mapview)
+tmap_mode("view")
+ken <- tm_shape(bdy1, name = 'County')+
+  tm_borders() +
+  tm_shape(bdy2, name = 'Subcounty')+
+  tm_borders() +
+  tm_shape(bdy3, name = 'Ward')+
+  tm_borders()+
+  tm_shape(conf, name = 'Conflict')+
+  tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs, popup.vars=c("Ward", "FATALITIES", "climvar_medn_prec", "livelihoods", "female_population", "male_population", "median_male_female_edu_diff"))+
+  #tm_layout(legend.position = c("left", "bottom") )
+  tm_view(view.legend.position =c("left", "bottom"))+
+  tm_format("World")
+ken 
+
+```
+.
