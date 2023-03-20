@@ -58,6 +58,7 @@ bdy2 <- geodata::gadm(country=iso, level=2, path=paste0(root,iso,'/'))
 bdy2 <- sf::st_as_sf(bdy2)
 bdy3 <- geodata::gadm(country=iso, level=3, path=paste0(root,iso,'/'))
 bdy3 <- sf::st_as_sf(bdy3)
+temp$Woreda <- temp$NAME_3
 library(tmap)
 library(mapview)
 tmap_mode("view")
@@ -66,12 +67,11 @@ et <- tm_shape(bdy1, name = 'Region')+
   tm_shape(bdy2, name = 'Zone')+
   tm_borders() +
   tm_shape(bdy3, name = 'Woreda')+
-  tm_borders() +
-  tm_shape(bdy3, name = 'Woreda')+
   tm_borders()+
+  #tm_text('NAME_3')+
   tm_shape(temp, name = 'Conflict')+
-  tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs)+
-  tm_dots(size='FATALITIES', col='blue')+
+  tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs, popup.vars=c("Woreda", "FATALITIES", "climvar_medn_prec", "livelihoods", "female_population", "male_population", "median_male_female_edu_diff"))+
+  #tm_dots(size='FATALITIES', col='blue')+
   tm_format("World")
 et 
 
