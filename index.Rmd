@@ -1,6 +1,5 @@
 ---
-title: "Data Science"
-author: "Benson Kenduiywo"
+title: "Climate Security"
 bibliography: references.bib
 csl: "apa-6th-edition.csl"
 output: 
@@ -18,16 +17,17 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Climate Security
+## Introduction
 
 *Climate security* refers to any **threats or risks to states, societies, and individual citizens directly or indirectly caused by climate change**. Climate variability and climate extreme events are impacting food, land and water systems thereby threatening agriculture productivity, and diminishing natural resources of land and water, which increases resource-based conflicts. 
 
 
-### Ethiopia
+## Ethiopia
 
-Located in the horn of Africa.
+Ethiopia is considered one of the most susceptible countries to climate change-related shocks, including droughts, floods, and desert locust infestation, leading to massive losses. This vulnerability also stems from political, socioeconomic, and geographic conditions, which remain unfavourable. Agriculture is critical to the National GDP, accounting for 40\% of the GDP while employing 78\% of the workforce. It is considered a least developed country with more than 100 million population. Nearly 80\% of the population lives in the rural area practising smallholder farming.  
 
 ```{r E1, message=F, warning=F, echo=F}
+#https://r.geocompx.org/adv-map.html
 library(terra)
 root <- 'D:/OneDrive - CGIAR/Analysis/CSO/'
 iso <- 'ETH'
@@ -80,5 +80,5 @@ et
 
 
 
-## References
+
 
