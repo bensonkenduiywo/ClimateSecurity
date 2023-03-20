@@ -68,4 +68,41 @@ ken <- tm_shape(bdy1, name = 'County')+
 ken 
 
 ```
-.
+
+2. **Scenario II**
+
+In this scenario all available ACCLED conflict data between 2012--2022 were used. 
+
+
+```{r k2, echo=FALSE, message=F, warning=F,comment=F}
+
+conf <- geojsonio::geojson_sf(paste0(root,iso,'/clim_conflict_ips_overlays (ACCLED-2012-2022).geojson'))
+conf <- conf[conf$conflict_clust_label=="High conflict"  ,]
+k <- unique(conf$intersect_conf_clim)
+k <- rev(k)
+#k <- c(k[1:4],k[9:12],k[5:8])
+for(i in 1:length(k)){
+  conf$clust[conf$intersect_conf_clim==k[i]] <- i
+}
+#labs <- conf$intersect_conf_clim[!duplicated(conf$clust)]
+labs <- gsub(" levels of|\\[|/.*", "", k)
+
+#c(1,3,4,2,9,11,)
+
+conf$clust <- as.factor(conf$clust)
+
+tmap_mode("view")
+ken <- tm_shape(bdy1, name = 'County')+
+  tm_borders() +
+  tm_shape(bdy2, name = 'Subcounty')+
+  tm_borders() +
+  tm_shape(bdy3, name = 'Ward')+
+  tm_borders()+
+  tm_shape(conf, name = 'Conflict')+
+  tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs, popup.vars=c("Ward", "FATALITIES", "climvar_medn_prec", "livelihoods", "female_population", "male_population", "median_male_female_edu_diff"))+
+  #tm_layout(legend.position = c("left", "bottom") )
+  tm_view(view.legend.position =c("left", "bottom"))+
+  tm_format("World")
+ken 
+
+```
