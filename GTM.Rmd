@@ -1,0 +1,65 @@
+---
+output: 
+   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Guatemala hotspots
+
+Climate-conflict itersection hotpspots in Guatemala.
+
+```{r k3, echo=FALSE, message=F, warning=F,comment=F}
+library(terra)
+library(tmap)
+library(mapview)
+root <- 'D:/OneDrive - CGIAR/Analysis/CSO/'
+iso <- 'GTM'
+
+conf <- geojsonio::geojson_sf(paste0(root,iso,'/clim_conflict_ips_overlays.geojson'))
+conf <- conf[conf$label=="High conflict"  ,]
+k <- unique(conf$intersect_conf_clim)
+k <- c(k[3],k[1],k[2])
+#k <- c(k[1:4],k[9:12],k[5:8])
+for(i in 1:length(k)){
+  conf$clust[conf$intersect_conf_clim==k[i]] <- i
+}
+#labs <- conf$intersect_conf_clim[!duplicated(conf$clust)]
+labs <- gsub(" levels of|\\[|/.*", "", k)
+
+conf$clust <- as.factor(conf$clust)
+bdy1 <- geodata::gadm(country=iso, level=1, path=paste0(root,iso,'/'))
+bdy1 <- sf::st_as_sf(bdy1)
+bdy2 <- geodata::gadm(country=iso, level=2, path=paste0(root,iso,'/'))
+bdy2 <- sf::st_as_sf(bdy2)
+#bdy3 <- geodata::gadm(country=iso, level=3, path=paste0(root,iso,'/'))
+#bdy3 <- sf::st_as_sf(bdy3)
+library(sf)
+conf <- st_intersection(conf,bdy2[c("NAME_1","NAME_2")])
+conf$Department <- conf$NAME_1
+conf$Municipality <- conf$NAME_2
+names(conf)[7] <- 'Fatalities' 
+
+tmap_mode("view")
+ken <- tm_shape(bdy1, name = 'Department')+
+  tm_borders() +
+  tm_shape(bdy2, name = 'Municipality')+
+  tm_borders() +
+  #tm_shape(bdy3, name = 'Ward')+
+  #tm_borders()+
+  tm_shape(conf, name = 'Conflict')+
+  tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs, popup.vars=c("Department","Municipality", "Fatalities", "climvar_medn_prec", "climvar_NDWS_median"))+
+  tm_view(view.legend.position =c("right", "top"))+
+  tm_format("World")
+ken 
+
+```
