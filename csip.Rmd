@@ -1,6 +1,5 @@
 ---
 title: "Climate Security Investment Planning (CSIP) Workshop"
-date: "2023-03-20"
 bibliography: references.bib
 csl: "apa-6th-edition.csl"
 output: 
@@ -20,11 +19,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Background
 
-The CSIP intends to engage Climate Smart Agriculture (CSA) practitioners and decision makers in developing programmatic and investment strategies that integrate conflict-sensitive approaches in CSA interventions. To achieve this targeted areas have been identified based on evidence from an intersection of climate and conflict. Three scenarios, focusing on only high conflict wiith different climate hotspot categories, were analyzed as follows:
+The CSIP intends to engage Climate Smart Agriculture (CSA) practitioners and decision makers in developing programmatic and investment strategies that integrate conflict-sensitive approaches in CSA interventions. To achieve this targeted areas have been identified based on evidence from an intersection of climate and conflict. Three scenarios, focusing on only high conflict with different climate hotspot categories, were analyzed as follows:
 
-1. **Scenario I**
+**Scenario I**
 
-In this scenario all available ACCLED conflict data between 1997--2022 were used. 
+In this scenario all available [Armed Conflict Location & Event Data Project (ACLED)](https://acleddata.com/) conflict data between 1997--2022 were used. 
 
 ```{r k1, echo=FALSE, message=F, warning=F,comment=F}
 library(terra)
@@ -56,10 +55,10 @@ library(mapview)
 tmap_mode("view")
 ken <- tm_shape(bdy1, name = 'County')+
   tm_borders() +
-  tm_shape(bdy2, name = 'Subcounty')+
-  tm_borders() +
-  tm_shape(bdy3, name = 'Ward')+
-  tm_borders()+
+  #tm_shape(bdy2, name = 'Subcounty')+
+  #tm_borders() +
+  #tm_shape(bdy3, name = 'Ward')+
+  #tm_borders()+
   tm_shape(conf, name = 'Conflict')+
   tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs, popup.vars=c("Ward", "FATALITIES", "climvar_medn_prec", "livelihoods", "female_population", "male_population", "median_male_female_edu_diff"))+
   #tm_layout(legend.position = c("left", "bottom") )
@@ -69,13 +68,31 @@ ken
 
 ```
 
-2. **Scenario II**
 
-In this scenario all available ACCLED conflict data between 2012--2022 were used. 
+```{r s1, include=FALSE, results='hide'}
+##Static Map
+tmap_mode("plot")
+ken <- tm_shape(bdy1, name = 'County')+
+  tm_borders() +
+  #tm_shape(bdy2, name = 'Subcounty')+
+  #tm_borders() +
+  #tm_shape(bdy3, name = 'Ward')+
+  #tm_borders()+
+  tm_shape(conf, name = 'Conflict')+
+  tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs, popup.vars=c("Ward", "FATALITIES", "climvar_medn_prec", "livelihoods", "female_population", "male_population", "median_male_female_edu_diff"))+
+  #tm_layout(legend.position = c("left", "bottom") )
+  tm_view(view.legend.position =c("left", "bottom"))+
+  tm_format("World")
+ken 
 
+```
+
+
+**Scenario II**
+
+[ACLED](https://acleddata.com/) conflict data between 2012--2022 were used. 
 
 ```{r k2, echo=FALSE, message=F, warning=F,comment=F}
-
 conf <- geojsonio::geojson_sf(paste0(root,iso,'/clim_conflict_ips_overlays (ACCLED-2012-2022).geojson'))
 conf <- conf[conf$conflict_clust_label=="High conflict"  ,]
 k <- unique(conf$intersect_conf_clim)
@@ -87,22 +104,24 @@ for(i in 1:length(k)){
 #labs <- conf$intersect_conf_clim[!duplicated(conf$clust)]
 labs <- gsub(" levels of|\\[|/.*", "", k)
 
-#c(1,3,4,2,9,11,)
-
 conf$clust <- as.factor(conf$clust)
+conf$Ward <- conf$NAME_3
 
 tmap_mode("view")
 ken <- tm_shape(bdy1, name = 'County')+
   tm_borders() +
-  tm_shape(bdy2, name = 'Subcounty')+
-  tm_borders() +
-  tm_shape(bdy3, name = 'Ward')+
-  tm_borders()+
+  #tm_shape(bdy2, name = 'Subcounty')+
+  #tm_borders() +
+  #tm_shape(bdy3, name = 'Ward')+
+  #tm_borders()+
   tm_shape(conf, name = 'Conflict')+
   tm_fill(col= "clust", palette="-YlOrRd", title = 'Climate-Conflict-Hotspots', labels=labs, popup.vars=c("Ward", "FATALITIES", "climvar_medn_prec", "livelihoods", "female_population", "male_population", "median_male_female_edu_diff"))+
-  #tm_layout(legend.position = c("left", "bottom") )
   tm_view(view.legend.position =c("left", "bottom"))+
   tm_format("World")
 ken 
 
 ```
+
+
+[**Scenario III**](csipIII.html)
+
