@@ -16,6 +16,8 @@ navbar:
           href: CS.html
         - text: "Climate Security Investment Planning"
           href: csip.html
+        - text: "Guatemala hotspots"
+          href: GTM.html
   right:
     - icon: fa-envelope fa-lg
       href: mailto:bensonkemboi@gmail.com
