@@ -12,7 +12,7 @@ navbar:
     - text: "More"
       icon: fa-gear
       menu:
-        - text: "Climate Secuirty"
+        - text: "Climate Security"
           href: CS.html
         - text: "Climate Security Investment Planning"
           href: csip.html
