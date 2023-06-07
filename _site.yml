@@ -18,6 +18,8 @@ navbar:
           href: csip.html
         - text: "Guatemala hotspots"
           href: GTM.html
+        - text: "Zambia"
+          href: ZMB.html
   right:
     - icon: fa-envelope fa-lg
       href: mailto:bensonkemboi@gmail.com
