@@ -29,7 +29,7 @@ In this scenario all available [Armed Conflict Location & Event Data Project (AC
 library(terra)
 root <- 'D:/OneDrive - CGIAR/Analysis/CSO/'
 iso <- 'KEN'
-conf <- geojsonio::geojson_sf(paste0(root,iso,'/clim_conflict_ips_overlays  (ACCLED-1997-2022).geojson'))
+conf <- geojsonio::geojson_sf(paste0(root,iso,'/clim_conflict_ips_overlays (ACCLED-1997-2022).geojson'))
 conf <- conf[conf$conflict_clust_label=="High conflict"  ,]
 k <- unique(conf$intersect_conf_clim)
 k <- rev(k)
