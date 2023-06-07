@@ -1,0 +1,56 @@
+---
+title: Displacements Tracking
+output: 
+   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Ethipoia
+
+
+
+```{r e1, echo=FALSE, message=F, warning=F,comment=F}
+#https://jcheshire.com/visualisation/mapping-flows/
+https://personal.tcu.edu/kylewalker/interactive-flow-visualization-in-r.html
+library(terra)
+root <- 'D:/OneDrive - CGIAR/Analysis/FCM/'
+iso <- 'ETH'
+bdy1 <- geodata::gadm(country=iso, level=1, path=paste0(root,iso,'/'))
+#bdy1 <- sf::st_as_sf(bdy1) #regions
+bdy2 <- geodata::gadm(country=iso, level=2, path=paste0(root,iso,'/'))
+#bdy2 <- sf::st_as_sf(bdy2) #zones
+bdy3 <- geodata::gadm(country=iso, level=3, path=paste0(root,iso,'/'))
+#bdy3 <- sf::st_as_sf(bdy3) #Woredas
+
+disp <- readxl::read_excel(paste0(root,iso,'/SAS/DTM Ethiopia Emergency Site Assessment Round 3 Dataset.xlsx'), sheet = 'Sites')
+names(disp)[16] <- 'Longitude'
+names(disp)[17] <- 'Latitude'
+disp$Longitude <- as.numeric(disp$Longitude)
+disp$Latitude <- as.numeric(disp$Latitude)
+
+eth <- vect(disp, geom=c("Longitude", "Latitude"), crs="", keepgeom=FALSE)
+crs(eth) <-  crs(bdy1)
+plot(bdy1)
+plot(eth, add=T)
+```
+
+
+```{r e2}
+Origin of Largest IDP group/Woreda (1.5.b.3)
+"Number of largest IDP group Individuals"  
+If relocation, where are the majority of IDPs planning to relocate to?/Destination
+If relocation, where are the majority of IDPs planning to relocate to?/If Destination is out of the country, please specify
+
+
+```
+
