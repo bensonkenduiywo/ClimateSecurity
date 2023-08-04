@@ -1,0 +1,100 @@
+---
+output: 
+   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = FALSE, message = FALSE, comment=F)
+```
+
+# Guatemala IOM project demo
+
+## Migration, conflict and GBV rates
+
+Visualization including pop-up variables
+
+```{r k3}
+rm(list=ls(all=TRUE))
+library(geojsonio)
+library(geojsonsf)
+library(geodata)
+library(sf)
+library(tmap)
+library(readxl)
+
+#reading the geojson megapixels
+rpath <- "D:/OneDrive - CGIAR/Analysis/Team/korir/Guatemala/"
+GTM_mpixels <- st_read(paste0(rpath,'GTM_megapixels.geojson'), quiet = T)
+GTM_mpixels$clust[GTM_mpixels$conflict_clust_short_label=='High'] <- 3
+GTM_mpixels$clust[GTM_mpixels$conflict_clust_short_label=='Moderate'] <- 2
+GTM_mpixels$clust[GTM_mpixels$conflict_clust_short_label=='Limited'] <- 1
+
+#GTM_mpixels$clust <- as.integer(GTM_mpixels$clust)
+#GTM admin level2
+GTM_adm1 <- sf::st_as_sf(geodata::gadm(country = 'GTM',level = 1, path = tempdir() ))
+GTM_adm2 <- sf::st_as_sf(geodata::gadm(country = 'GTM',level = 2, path = tempdir() ))
+
+Guatemala_IOM_returns <- read_excel(paste0(rpath,"Guatemala_IOM_returns_x.xlsx"))
+#my_data <- read.delim("Guatemala_IOM_returns.csv", header = TRUE, sep = "\t", dec = ",",)
+colnames(Guatemala_IOM_returns) =  gsub('in\r\n', '', Guatemala_IOM_returns[1,])#gsub('.*\n', '', Guatemala_IOM_returns[1,])
+Guatemala_IOM_returns <- Guatemala_IOM_returns[-c(1,2), ]
+names(Guatemala_IOM_returns)[1] <- 'Municipality'
+#Guatemala_IOM_returns <- Guatemala_IOM_returns[,-7]
+GTM_GBV_Summarized <- read_excel(paste0(rpath,"GTM_GBV_Summarized.xlsx"))
+names(GTM_adm2)[7] <- 'Municipality'
+
+
+#Guatemala_IOM_returns$Municipality <- toupper(Guatemala_IOM_returns$Municipality)
+#GTM_adm2$Municipality <- toupper(GTM_adm2$Municipality)
+missing <- setdiff(unique(Guatemala_IOM_returns$Municipality), unique(GTM_adm2$Municipality))
+#i = unique(Guatemala_IOM_returns$Municipality) %in% unique(GTM_adm2$Municipality)
+#Guatemala_IOM_returns$Municipality[!i] #Show values missing in GTM_adm2
+
+
+#Merging data
+gbv_iom <- merge(Guatemala_IOM_returns, GTM_GBV_Summarized,all.x=T)
+dff <- merge(GTM_adm2, gbv_iom, by = 'Municipality')
+#GTM_GBV_Summarized$Municipality <- toupper(GTM_GBV_Summarized$Municipality)
+##merged_adm2_GBV <- merge(GTM_adm2, GTM_GBV_Summarized, by = c('Municipality'))
+#merged_adm2_GBV_IOM <- merge(merged_adm2_GBV, Guatemala_IOM_returns,all.y=T)
+
+
+#plotting Migration, conflict and GBV rates
+tmap_mode('view')
+tm_shape(dff) +
+  tm_fill(col = "Rate",NA.col = "transparent", style = 'cont',
+          popup.vars=c("Department" ,"Municipality", "Rate","Returns 2018","Returns 2019", 
+                       "Returns 2020", "Returns 2021", "Returns 2018-2021")) +
+  tm_borders(lwd = 1, col = "black") +
+  tm_shape(GTM_mpixels) +
+  tm_fill(col = "label", palette =c("High Conflict"='#f03b20',
+                                      'Moderate Conflict'='#feb24c',
+                                      'Limited Conflict'='#ffeda0')) #+
+  #tm_legend(title ='Conflict Levels')
+```
+
+
+## climate-conflict co-occurence
+
+Visualization of climate-conflict co-occurence and pop-up variables
+
+```{r k4}
+tmap_mode('view')
+tm_shape(GTM_mpixels) +
+  tm_fill(col = "clust",  palette= "YlOrRd", legend.show = F, 
+          popup.vars = c('intersect_conf_clim', "FATALITIES","pop", "migration", "female_population")) +
+  tm_shape(GTM_adm1)+
+  tm_borders(lwd = 1, col = "black") +
+  tm_text(text = "NAME_1", size = 1, col = "black") #+
+  #tm_legend(title ='Climate Conflict Intersections')
+
+
+```
+
