@@ -20,6 +20,8 @@ navbar:
           href: GTM.html
         - text: "Zambia"
           href: ZMB.html
+        - text: "IOM Project: GTM"
+          href: GTM_iom.html
   right:
     - icon: fa-envelope fa-lg
       href: mailto:bensonkemboi@gmail.com
