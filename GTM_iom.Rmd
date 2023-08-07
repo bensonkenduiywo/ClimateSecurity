@@ -38,8 +38,8 @@ GTM_mpixels$clust[GTM_mpixels$conflict_clust_short_label=='Limited'] <- 1
 
 #GTM_mpixels$clust <- as.integer(GTM_mpixels$clust)
 #GTM admin level2
-GTM_adm1 <- sf::st_as_sf(geodata::gadm(country = 'GTM',level = 1, path = tempdir() ))
-GTM_adm2 <- sf::st_as_sf(geodata::gadm(country = 'GTM',level = 2, path = tempdir() ))
+GTM_adm1 <- sf::st_as_sf(geodata::gadm(country = 'GTM', version =  "latest" , level = 1, path = tempdir() ))
+GTM_adm2 <- sf::st_as_sf(geodata::gadm(country = 'GTM', version =  "latest" ,level = 2, path = tempdir() ))
 
 Guatemala_IOM_returns <- read_excel(paste0(rpath,"Guatemala_IOM_returns_x.xlsx"))
 #my_data <- read.delim("Guatemala_IOM_returns.csv", header = TRUE, sep = "\t", dec = ",",)
@@ -68,7 +68,7 @@ dff <- merge(GTM_adm2, gbv_iom, by = 'Municipality')
 
 #plotting Migration, conflict and GBV rates
 tmap_mode('view')
-tm_shape(dff) +
+tm_shape(dff, name ='GBV') +
   tm_fill(col = "Rate",NA.col = "transparent", style = 'cont',
           popup.vars=c("Department" ,"Municipality", "Rate","Returns 2018","Returns 2019", 
                        "Returns 2020", "Returns 2021", "Returns 2018-2021")) +
