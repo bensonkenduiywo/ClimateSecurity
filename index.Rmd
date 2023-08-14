@@ -21,6 +21,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 *Climate security* refers to any **threats or risks to states, societies, and individual citizens directly or indirectly caused by climate change**. Climate variability and climate extreme events are impacting food, land and water systems thereby threatening agriculture productivity, and diminishing natural resources of land and water, which increases resource-based conflicts. 
 
+## IOM GTM Project
+
+[Click here](GTM_iom.html)
 
 ## Ethiopia
 
