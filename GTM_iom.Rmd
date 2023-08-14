@@ -40,8 +40,8 @@ library(tmap)
 library(readxl)
 
 #reading the geojson megapixels
-#rpath <- "D:/OneDrive - CGIAR/Analysis/Team/korir/Guatemala/"
-rpath <- 'D:/OneDrive - CGIAR/Guatemala/'
+rpath <- "D:/OneDrive - CGIAR/SA_Team/korir/Guatemala/"
+#rpath <- 'D:/OneDrive - CGIAR/Guatemala/'
 GTM_mpixels <- st_read(paste0(rpath,'GTM_megapixels.geojson'), quiet = T)
 GTM_mpixels$clust[GTM_mpixels$conflict_clust_short_label=='High'] <- 3
 GTM_mpixels$clust[GTM_mpixels$conflict_clust_short_label=='Moderate'] <- 2
@@ -49,13 +49,8 @@ GTM_mpixels$clust[GTM_mpixels$conflict_clust_short_label=='Limited'] <- 1
 
 #GTM_mpixels$clust <- as.integer(GTM_mpixels$clust)
 #GTM admin level2
-<<<<<<< HEAD
-GTM_adm1 <- sf::st_as_sf(geodata::gadm(country = 'GTM', version =  "latest" , level = 1, path = tempdir() ))
-GTM_adm2 <- sf::st_as_sf(geodata::gadm(country = 'GTM', version =  "latest" ,level = 2, path = tempdir() ))
-=======
 GTM_adm1 <- sf::st_as_sf(geodata::gadm(country = 'GTM',level = 1,version="latest", path = tempdir() ))
 #GTM_adm2 <- sf::st_as_sf(geodata::gadm(country = 'GTM',level = 2,version="latest", path = tempdir() ))
->>>>>>> a85c32a910668139a98b316c0e0adc3d99202c7c
 
 
 #Loading updated shapefile from HDX https://data.humdata.org/dataset/cod-ab-gtm?
@@ -90,15 +85,9 @@ dff$`Returns 2018-2021` <- as.numeric(dff$`Returns 2018-2021`)
 
 #plotting Migration, conflict and GBV rates
 tmap_mode('view')
-<<<<<<< HEAD
-tm_shape(dff, name ='GBV') +
-  tm_fill(col = "Rate",NA.col = "transparent", style = 'cont',
-          popup.vars=c("Department" ,"Municipality", "Rate","Returns 2018","Returns 2019", 
-=======
   tm_shape(dff, name = 'IOM returns') +
   tm_fill(col = "Returns 2018-2021",NA.col = "transparent", style = 'cont',
           popup.vars=c("Municipality","Returns 2018","Returns 2019", 
->>>>>>> a85c32a910668139a98b316c0e0adc3d99202c7c
                        "Returns 2020", "Returns 2021", "Returns 2018-2021")) +
   tm_shape(dff, name = 'Domestic Violence') +
   tm_fill(col = "Both Sex Affected",NA.col = "transparent", style = 'cont',popup.vars=c("Men","Women")) +
